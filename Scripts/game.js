@@ -1,10 +1,16 @@
-﻿window.onload = init;
+window.onload = init;
 window.onresize = resizeboard;
+var moves;
 var maindiv;
 var canvas = null, ctx = null, dicecanvas = null, dicectx = null, upcanvas = null, upctx = null;
 var roles = ["red", "yellow", "blue", "green"];
-var routs = []; 
-var specialPos = []; 
+var roles_i=-1;
+var redpos=0,greenpos=0,yellowpos=0,bluepos=0;
+var mapxr = new Array();
+var mapxye = new Array();
+var mapxb = new Array();
+var mapxg = new Array();
+var mapy = new Array();
 
 function init() {
     initPlayGround();
@@ -129,22 +135,6 @@ function createValueMap(){
     mapxy.push([1, 24, 23, 22, 21, 20, 19]);
 }
 
-function initiatePlaneRouts() {
-    //fly over index -->17 ~ 29 **57 each~~
-    var redRout = [
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
-    var yellowRout = [
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
-    var blueRout = [
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
-    var greenRout = [
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24];
-    routs.push(redRout);
-    routs.push(yellowRout);
-    routs.push(blueRout);
-    routs.push(greenRout);
-}
-
 var playStatus = (function () {
     var s = [];
     for (var k = 0; k < roles.length; k++) {
@@ -153,8 +143,6 @@ var playStatus = (function () {
             name: null,
             color: roles[k],
             index: k,
-            allowTakeOff: false,
-            continuePlaying: false,
             fly: false,
             overLimit: 0,
             touchBaseCount: 0,
@@ -256,6 +244,8 @@ function returnDiceImg(val) {
 
 
 function rolltheDice(btn) {
+	var diceValue;
+	var turn=roles[(++roles_i)%4];
     dicectx.clearRect(0, 0, tileWidth * 3, tileWidth * 3);
     var diceposi = [0, 1, 1, 0];
     var diceposj = [0, 0, 1, 1];
@@ -265,18 +255,20 @@ function rolltheDice(btn) {
         diceValue = Math.floor((Math.random() * 6) + 1);
         var img = returnDiceImg(diceValue);
         i++;
-        dicectx.drawImage(img, tileWidth * 2 * (diceposi[i % 4]), tileWidth * 1.5 * (diceposj[i % 3]), tileWidth * 1.5, tileWidth * 1.5);
-    }, 180);
-    setTimeout(function () {
+	dicectx.drawImage(img, tileWidth * 2 * (diceposi[i % 4]), tileWidth * 1.5 * (diceposj[i % 3]), tileWidth * 1.5, tileWidth * 1.5);
+    }, 500);
+	setTimeout(function () {
         clearInterval(rolling);
-    }, 2000);
+		drawTheBoard();
+		movePlane(turn,diceValue);
+    }, 1900);
 }
  
 function placeDefaultPlanes(color) {
-    var redposes = [0.5, 7.5];
-	var yellowposes = [0.75,7.5];
-    var blueposes = [1,7.5];
-    var greenposes = [1.25,7.5];
+    var redposes = [0.45, 7.5];
+	var yellowposes = [0.70,7.5];
+    var blueposes = [0.95,7.5];
+    var greenposes = [1.20,7.5];
     var currentpos = null;
     var i_role = null;
     switch (color) {
@@ -294,65 +286,92 @@ function placeDefaultPlanes(color) {
 	upctx.shadowColor = "black";
 	for (var tempPosInd = 0; tempPosInd < 4; tempPosInd++) {
 		upctx.drawImage(img, tileWidth * currentpos[tempPosInd], tileWidth * currentpos[tempPosInd + 1], tileWidth/3, tileWidth/3);
-        playStatus[i_role].planes[tempPosInd].pos.left = Math.floor(tileWidth * currentpos[tempPosInd]) - 1;
-        playStatus[i_role].planes[tempPosInd].pos.top = Math.floor(tileWidth * currentpos[tempPosInd + 1]) - 1;
-        playStatus[i_role].planes[tempPosInd].pos.right = Math.floor(tileWidth * currentpos[tempPosInd] + tileWidth) + 1;
-        playStatus[i_role].planes[tempPosInd].pos.bottom = Math.floor(tileWidth * currentpos[tempPosInd + 1] + tileWidth) + 1;
 }
-}/*
-function aPlaneClicked(clickedindex, selfclick) {
-    var tempvar = clickedindex;
-    if (selfclick) {
-        var msg = JSON.stringify({ "planeclicked": tempvar });
-        sendJSONMessage(msg);
-    }	
-    else {
-        notMe = true;
+}
+function pixelMap(color)
+{
+	mapxr.push([0.45,0.45,0.45,0.45,0.45,0.45,0.45,0.45,1.45, 2.45, 3.45, 4.45, 5.45, 6.45, 6.45, 6.45, 6.45, 6.45, 6.45,6.45,5.45,4.45,3.45,2.45,1.45]);
+	mapxye.push([0.70,0.70,0.70,0.70,0.70,0.70,0.70,0.70,1.70, 2.70, 3.70, 4.70, 5.70, 6.70, 6.70, 6.70, 6.70, 6.70, 6.70,6.70,5.70,4.70,3.70,2.70,1.70]);
+	mapxb.push([0.95,0.95,0.95,0.95,0.95,0.95,0.95,0.95,1.95, 2.95, 3.95, 4.95, 5.95, 6.95, 6.95, 6.95, 6.95, 6.95, 6.95,6.95,5.95,4.95,3.95,2.95,1.95]);
+	mapxg.push([1.20,1.20,1.20,1.20,1.20,1.20,1.20,1.20,2.20, 3.20, 4.20, 5.20, 6.20, 7.20, 7.20, 7.20, 7.20, 7.20, 7.20,7.20,6.20,5.20,4.20,3.20,2.20]);
+	mapy.push([7.5,7,6,5,4,3,2,1,1,1,1,1,1,1,2,3,4,5,6,7,7,7,7,7,7]);
+	switch (color){
+		case "red":
+					return [mapxr,mapy];
+					break;
+		case "yellow":
+					return [mapxye,mapy];					
+					break;
+		case "blue":
+					return [mapxb,mapy];					
+					break;
+		case "green":
+					return [mapxg,mapy];					
+					break;
+		default: break;
+	}
+}
+
+function movePlane(color,moves)
+{
+	switch (color) {
+        case "red": redpos=redpos+moves;
+				if(redpos>24){redpos=redpos%24;}
+				break;
+        case "yellow": yellowpos=yellowpos+moves; 
+				if(yellowpos>24){yellowpos=yellowpos%24;}
+				break;
+        case "blue": bluepos=bluepos+moves; 
+				if(bluepos>24){bluepos=bluepos%24;}
+				break;
+        case "green": greenpos=greenpos+moves; 
+				if(greenpos>24){greenpos=greenpos%24;}
+				break;
+        default: break;
     }
+	placePlane("red");
+	placePlane("yellow");
+	placePlane("blue");
+	placePlane("green");
+}
+
+function placePlane(color)
+{	
+	var currentpos = null;
+	var redposes;
+	var yellowposes;
+    var blueposes;
+    var greenposes;
+	
+	var test=this.pixelMap(color);
     
-    if (diceValue == 0) {
-        document.getElementById("info").innerText = "Please roll dice";
-        return;
+	var i_role = null;
+    switch (color) {
+        case "red": 
+				redposes = [test[0][0][redpos], test[1][0][redpos]];
+				currentpos = redposes; i_role = 0;
+				break;
+        case "yellow":
+				yellowposes = [test[0][0][yellowpos],test[1][0][yellowpos]];
+				currentpos = yellowposes; i_role = 1;
+				break;
+        case "blue": 
+				blueposes = [test[0][0][bluepos],test[1][0][bluepos]];
+				currentpos = blueposes; i_role = 2;
+				break;
+        case "green":
+				greenposes = [test[0][0][greenpos],test[1][0][greenpos]];
+				currentpos = greenposes; i_role = 3;
+				break;
+        default: break;
     }
-    playhand.role.planes[tempvar].previousValue = playhand.role.planes[tempvar].value;
-            playhand.role.planes[tempvar].value += diceValue;
-            if (playhand.role.planes[tempvar].value < 57 && playhand.role.planes[tempvar].value > 0) {
-                var tempRoutValue = routs[playhand.role.index][playhand.role.planes[tempvar].value - 1];
-                
-                    }
-                }
-        
-            diceValue = 0; break;
-    updatePlayBoard();
-    if (onmobile) {
-        dicectx.clearRect(0, 0, tileWidth * 2, tileWidth * 2);
-    }
-    else
-        dicectx.clearRect(0, 0, tileWidth * 4, tileWidth * 4);
+	var currentplane = color + "plane";
+    var img = document.getElementById(currentplane);
+    upctx.shadowBlur = 10;
+    upctx.shadowOffsetX = 2;
+    upctx.shadowOffsetY = 2;
+	upctx.shadowColor = "black";
+	for (var tempPosInd = 0; tempPosInd < 4; tempPosInd++) {
+		upctx.drawImage(img, tileWidth * currentpos[tempPosInd], tileWidth * currentpos[tempPosInd + 1], tileWidth/3, tileWidth/3);
+} 
 }
-/*	
-function updatePlayBoard() {
-    var ifChangeHands = -1;
-    if (playhand.role) {
-        for (var i = 0; i < playhand.role.planes.length; i++) {
-            if (ifChangeHands < playhand.role.planes[i].value)
-                ifChangeHands = playhand.role.planes[i].value;
-            if (playhand.role.planes[i].value != playhand.role.planes[i].previousValue) {//a plane needs to be moved
-                var coordinates = moveAPlane(playhand.role.planes[i], playhand.role.planes[i].previousValue, playhand.role.planes[i].value);
-                playhand.role.planes[i].pos.left = Math.floor(coordinates.co_x) - 1;
-                playhand.role.planes[i].pos.top = Math.floor(coordinates.co_y) - 1;
-                playhand.role.planes[i].pos.right = Math.floor(coordinates.co_x + tileWidth) + 1;
-                playhand.role.planes[i].pos.bottom = Math.floor(coordinates.co_y + tileWidth) + 1;
-                if (playhand.role.planes[i].previousValue == playhand.role.planes[i].value) {
-                    handcount++;
-                    changeHands();
-                }
-                break;
-            }
-        }
-    }
-    if (ifChangeHands == -1 && clickOverflow != true) {
-        handcount++;
-        changeHands();
-    }
-}*/
