@@ -108,6 +108,21 @@ function drawTheBoard() {
             }
         }
     }
+	ctx.shadowBlur = 10;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;ctx.shadowColor = "black";
+	
+	ctx.clearRect(tileWidth * 2, tileWidth * 2, tileWidth * 2, tileWidth * 1.5);
+	ctx.putImageData(drawARegularTile("blue", tileWidth * 2, tileWidth * 1.5), tileWidth * 2, tileWidth * 2);
+	ctx.fillText("Opportunity",  tileWidth * 2.45, tileWidth * 2.75,tileWidth);
+	
+	ctx.clearRect(tileWidth * 4.1, tileWidth * 2, tileWidth * 2, tileWidth * 1.5);
+	ctx.putImageData(drawARegularTile("light blue", tileWidth * 2, tileWidth * 1.5), tileWidth * 4.1, tileWidth * 2);
+	ctx.fillText("Event",  tileWidth * 4.8, tileWidth * 2.75,tileWidth);
+	
+	ctx.clearRect(tileWidth * 4.1, tileWidth * 3.65, tileWidth * 2, tileWidth * 1.5);
+	ctx.putImageData(drawARegularTile("grey", tileWidth * 2, tileWidth * 1.5), tileWidth * 4.1, tileWidth * 3.65);
+	ctx.fillText("Expense",  tileWidth * 4.75, tileWidth * 4.4,tileWidth);
  
 }
 function createMap() {
