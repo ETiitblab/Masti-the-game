@@ -11,6 +11,7 @@ var mapxye = new Array();
 var mapxb = new Array();
 var mapxg = new Array();
 var mapy = new Array();
+var valueMap = new Array();
 
 function init() {
     initPlayGround();
@@ -60,6 +61,23 @@ function initPlayGround() {
     placeDefaultPlanes("blue");
     placeDefaultPlanes("green");
 }
+
+function charValues()
+{
+	var mapab=new Array();
+	mapab.push(["Expense"]);
+	mapab.push(["Event"]);
+	mapab.push(["Opportunity"]);
+	mapab.push(["Knowledge and training"]);
+	mapab.push(["Opportunity (collect pay)"]);
+	mapab.push(["Job change"]);
+	mapab.push(["Celebration"]);
+	mapab.push(["Academic Achievement"]);
+	mapab.push(["Health issue"]);	
+	return mapab;
+}
+
+
 function drawTheBoard() {
     refreshBoard();
     drawSkyGradient();
@@ -101,9 +119,6 @@ function drawTheBoard() {
 				case 9: ctx.putImageData(drawARegularTile("red", tileWidth, tileHeight), tileWidth / 2 + tileWidth * x, tileHeight / 2 + tileHeight * y);
 						ctx.fillText("Health issue", tileWidth / 2 + tileWidth * x , (tileHeight)+ tileHeight * y,tileWidth);
 						break;
-				case 10:ctx.putImageData(drawARegularTile("white", tileWidth, tileHeight), tileWidth / 2 + tileWidth * x, tileHeight / 2 + tileHeight * y);
-						ctx.fillText("Start", tileWidth / 2 + tileWidth * x , (tileHeight)+ tileHeight * y,tileWidth);
-						break;
                 	default: break;
             }
         }
@@ -135,19 +150,14 @@ function createMap() {
     mapxy.push([3, 0, 0, 0, 0, 0, 1]);
 	mapxy.push([2, 0, 0, 0, 0, 0, 2]);
     mapxy.push([1, 2, 9, 5, 1, 7, 3]);
-//	mapxy.push([10, 0, 0, 0, 0, 0, 0]);
 	return mapxy;
 }
 
-function createValueMap(){
-	var mapxy = new Array();
-	mapxy.push([7, 8, 9, 10, 11, 12, 13]);
-    mapxy.push([6, 0, 0, 0, 0, 0, 14]);
-    mapxy.push([5, 0, 0, 0, 0, 0, 15]);
-    mapxy.push([4, 0, 0, 0, 0, 0, 16]);
-    mapxy.push([3, 0, 0, 0, 0, 0, 17]);
-	mapxy.push([2, 0, 0, 0, 0, 0, 18]);
-    mapxy.push([1, 24, 23, 22, 21, 20, 19]);
+
+function ValueMap()
+{
+	valueMap.push([0,1,2,3,4,2,5,2,1,2,6,2,3,7,5,2,8,1,2,3,7,1,5,9,2]);
+	return valueMap;
 }
 
 var playStatus = (function () {
@@ -265,6 +275,7 @@ function rolltheDice(btn) {
     var diceposi = [0, 1, 1, 0];
     var diceposj = [0, 0, 1, 1];
     var i = -1;
+	dicectx.clearRect(0,0, tileWidth * 10, tileWidth * 10)
     var rolling = setInterval(function () {
         dicectx.clearRect(tileWidth * 2 * (diceposi[i % 4]), tileWidth * 1.5 * (diceposj[i % 3]), tileWidth * 1.5, tileWidth * 1.5);
         diceValue = Math.floor((Math.random() * 6) + 1);
@@ -276,8 +287,26 @@ function rolltheDice(btn) {
         clearInterval(rolling);
 		drawTheBoard();
 		movePlane(turn,diceValue);
+		displayCard(turn);
     }, 1900);
 }
+ 
+ function displayCard(color){
+	 var currentpos=0;
+	 switch(color){
+		case "red": currentpos = redpos; break;
+        case "yellow": currentpos = yellowpos;break;
+        case "blue": currentpos = bluepos; break;
+        case "green": currentpos = greenpos; break;
+        default: break;
+	 }
+	var nameValue=charValues();
+	var placeValue=ValueMap();
+	dicectx.font="30px helvetica";
+	dicectx.clearRect(0,0, tileWidth * 8, tileWidth * 8);
+	dicectx.putImageData(drawARegularTile("white", tileWidth * 8, tileWidth * 8),0,0);
+	dicectx.fillText((nameValue[(placeValue[0][currentpos])-1][0]),tileWidth,tileWidth*2,tileWidth*2);
+ }
  
 function placeDefaultPlanes(color) {
     var redposes = [0.45, 7.5];
