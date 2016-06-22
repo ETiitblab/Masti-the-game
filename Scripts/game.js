@@ -12,10 +12,41 @@ var mapxb = new Array();
 var mapxg = new Array();
 var mapy = new Array();
 var valueMap = new Array();
+var string = "this\n    is a multi\ line\    string";
 
 function init() {
     initPlayGround();
+	console.log(string);
 }
+
+CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
+
+    var lines = text.split("\n");
+
+    for (var i = 0; i < lines.length; i++) {
+
+        var words = lines[i].split(' ');
+        var line = '';
+
+        for (var n = 0; n < words.length; n++) {
+            var testLine = line + words[n] + ' ';
+            var metrics = this.measureText(testLine);
+            var testWidth = metrics.width;
+            if (testWidth > maxWidth && n > 0) {
+                this.fillText(line, x, y);
+                line = words[n] + ' ';
+                y += lineHeight;
+            }
+            else {
+                line = testLine;
+            }
+        }
+
+        this.fillText(line, x, y);
+        y += lineHeight;
+    }
+}
+
 function initPlayGround() {
     document.getElementById("playGround").style.display = "";
     maindiv = document.getElementById("main");
@@ -117,7 +148,8 @@ function drawTheBoard() {
 						ctx.fillText("Achievement", tileWidth / 2 + tileWidth * x , (tileHeight*1.25)+ tileHeight * y,tileWidth);
 						break;
 				case 9: ctx.putImageData(drawARegularTile("red", tileWidth, tileHeight), tileWidth / 2 + tileWidth * x, tileHeight / 2 + tileHeight * y);
-						ctx.fillText("Health issue", tileWidth / 2 + tileWidth * x , (tileHeight)+ tileHeight * y,tileWidth);
+						//ctx.fillText("Health issue", tileWidth / 2 + tileWidth * x , (tileHeight)+ tileHeight * y,tileWidth);
+						ctx.wrapText("Health\n issue",tileWidth / 2 + tileWidth * x,(tileHeight)+ tileHeight * y,tileWidth,15);
 						break;
                 	default: break;
             }
@@ -267,6 +299,11 @@ function returnDiceImg(val) {
     return img;
 }
 
+function enablerolling(btn){
+	document.getElementById("okay").hidden=true;
+	document.getElementById("rollDice").disabled=false;
+	dicectx.clearRect(0,0, tileWidth * 8, tileWidth * 8);
+}
 
 function rolltheDice(btn) {
 	var diceValue;
@@ -287,11 +324,25 @@ function rolltheDice(btn) {
         clearInterval(rolling);
 		drawTheBoard();
 		movePlane(turn,diceValue);
+		document.getElementById("rollDice").disabled=true;
+		document.getElementById("okay").hidden=false;
 		displayCard(turn);
     }, 1900);
 }
  
+function placeText(name){
+var textline;
+	//switch(name){
+		//case "Academic Achievement":
+			textline="You take efforts to upgrade your knowledge and its application in your work. Pay 500 MU towards\
+			expenses. Gross income and net income increase by 200 MU. Get 6 RS and 4 WB units.";
+			//break;
+	//}	
+	return textline;
+} 
+
  function displayCard(color){
+	 var TextLine;
 	 var currentpos=0;
 	 switch(color){
 		case "red": currentpos = redpos; break;
@@ -305,7 +356,11 @@ function rolltheDice(btn) {
 	dicectx.font="30px helvetica";
 	dicectx.clearRect(0,0, tileWidth * 8, tileWidth * 8);
 	dicectx.putImageData(drawARegularTile("white", tileWidth * 8, tileWidth * 8),0,0);
-	dicectx.fillText((nameValue[(placeValue[0][currentpos])-1][0]),tileWidth,tileWidth*2,tileWidth*2);
+	var name1=nameValue[(placeValue[0][currentpos])-1][0];
+	dicectx.fillText(name1,tileWidth,tileWidth*2,tileWidth*2);
+	TextLine=placeText(name1);
+	dicectx.font="10px helvetica";
+	dicectx.wrapText(TextLine,tileWidth,tileWidth*2.2,20,10);
  }
  
 function placeDefaultPlanes(color) {
