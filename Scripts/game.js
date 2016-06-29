@@ -12,11 +12,40 @@ var mapxb = new Array();
 var mapxg = new Array();
 var mapy = new Array();
 var valueMap = new Array();
-var string = "this\n    is a multi\ line\    string";
+var oppurValue = new Array();
+var eventValue = new Array();
+var expenseValue = new Array();
+var SI =[0,0,0,0];
+var MU =[0,0,0,0];
+var RS =[0,0,0,0];
+var WB =[0,0,0,0];
+
+function randomizer(size){
+	var a=new Array()
+	for (i=0;i<size;++i) a.push(i);
+	
+	function shuffle(array) {		
+		var tmp, current, top = array.length;
+		if(top){
+			while(--top) {
+		current = Math.floor(Math.random() * (top + 1));
+		tmp = array[current];
+		array[current] = array[top];
+		array[top] = tmp;
+		}
+  }
+  return array;
+}
+a = shuffle(a);
+return a;
+}
 
 function init() {
     initPlayGround();
-	console.log(string);
+	oppurValue=randomizer(36);
+	eventValue=randomizer(24);
+	expenseValue=randomizer(24);
+		displayDetails();
 }
 
 CanvasRenderingContext2D.prototype.wrapText = function (text, x, y, maxWidth, lineHeight) {
@@ -91,6 +120,24 @@ function initPlayGround() {
     placeDefaultPlanes("yellow");
     placeDefaultPlanes("blue");
     placeDefaultPlanes("green");
+	
+	pcanvas = document.getElementById("player");
+    pctx = pcanvas.getContext("2d");
+
+    pctx.font = "20px helvetica"
+    pctx.globalAlpha = 1.0;
+    pcanvas.setStyle = function (styleMap) {
+        var styleString = new String();
+        for (i in styleMap) {
+            styleString += i + ':' + styleMap[i] + '; ';
+        }
+        pcanvas.setAttribute('style', styleString);
+    }
+    var canvasStyle = {
+        'background': '#000000',
+        'border': '1px solid grey'
+    };
+    pcanvas.setStyle(canvasStyle);
 }
 
 function charValues()
@@ -113,8 +160,7 @@ function drawTheBoard() {
     refreshBoard();
     drawSkyGradient();
     var boardmap = createMap();
-	 ctx.font = "1em arial";
-	//ctx.textAlign="center";
+	ctx.font = "1em arial";
 	ctx.fillStyle='black';
     for (var x = 0; x < 7; x++) {
         for (var y = 0; y < 7; y++) {
@@ -191,38 +237,6 @@ function ValueMap()
 	valueMap.push([0,1,2,3,4,2,5,2,1,2,6,2,3,7,5,2,8,1,2,3,7,1,5,9,2]);
 	return valueMap;
 }
-
-var playStatus = (function () {
-    var s = [];
-    for (var k = 0; k < roles.length; k++) {
-        var role = {
-            self: false,
-            name: null,
-            color: roles[k],
-            index: k,
-            fly: false,
-            overLimit: 0,
-            touchBaseCount: 0,
-            win: false,
-            planes: []
-        };
-        for (var j = 0; j < 4; j++) {
-            var plane = {
-                previousValue: -1,
-                value: -1,
-                pos: {
-                    left: -1,
-                    top: -1,
-                    right: -1,
-                    bottom: -1
-                }
-            };
-            role.planes.push(plane);
-        }
-        s.push(role);
-}
-    return s;
-})();
 
 function refreshBoard() {
     canvasWidth = window.innerHeight;
@@ -303,6 +317,7 @@ function enablerolling(btn){
 	document.getElementById("okay").hidden=true;
 	document.getElementById("rollDice").disabled=false;
 	dicectx.clearRect(0,0, tileWidth * 8, tileWidth * 8);
+	displayDetails();
 }
 
 function rolltheDice(btn) {
@@ -330,19 +345,68 @@ function rolltheDice(btn) {
     }, 1900);
 }
  
-function placeText(name){
+function placeText(name,color){
 var textline;
-	//switch(name){
-		//case "Academic Achievement":
+var player_role;
+switch(color){
+	case "red":player_role=0;
+			break;
+	case "yellow":player_role=1;
+			break;
+	case "blue":player_role=2;
+			break;
+	case "green":player_role=3;
+			break;
+	default:break;
+}
+	switch(name){
+		case "Academic Achievement":
 			textline="You take efforts to upgrade your knowledge and its application in your work. Pay 500 MU towards\
 			expenses. Gross income and net income increase by 200 MU. Get 6 RS and 4 WB units.";
-			//break;
-	//}	
+			MU[player_role]-=500;
+			RS[player_role]+=6;
+			WB[player_role]+=4;
+			break;
+		case "Expense":
+			textline=expense();
+			break;
+		case "Event":
+			textline=Event();
+			break;
+		case "Opportunity":
+			textline=opportunity();
+			break;
+		case "Knowledge and training":
+			textline="You need to keep abreast of changing times and rapid technological developments. You must subscribe\
+			to lifestyle, business and technology magazines, journals and publications. Pay 300 MU towards subscription charges. Get 5 RS and 5 WB units. ";
+			MU[player_role]-=300;
+			RS[player_role]+=5;
+			WB[player_role]+=5;
+			break;
+		case "Opportunity (collect pay)":
+			textline=opportunity();
+			break;
+		case "Job change":
+			textline="You want a change and look for another job. Lose 1 turn for the change and time for settling down in\
+			your new environment. Your gross income and net income increase by 400 MU. ";
+			break;
+		case "Celebration":
+			textline="Your hard work results in success and is celebrated. Pay 500 MU for the party and get 5 RS units.";
+			break;
+			MU[player_role]-=500;
+			RS[player_role]+=5;
+		case "Health issue":	
+			textline="You work under continued stress and face a serious health issue. Pay 700 MU for the treatment. If you have medical insurance, pay nothing. Lose 20 WB units.";
+			MU[player_role]-=700;
+			WB[player_role]+=20;
+			break;
+	}	
 	return textline;
 } 
 
  function displayCard(color){
 	 var TextLine;
+	 var titleText='';
 	 var currentpos=0;
 	 switch(color){
 		case "red": currentpos = redpos; break;
@@ -354,14 +418,41 @@ var textline;
 	var nameValue=charValues();
 	var placeValue=ValueMap();
 	dicectx.font="30px helvetica";
-	dicectx.clearRect(0,0, tileWidth * 8, tileWidth * 8);
-	dicectx.putImageData(drawARegularTile("white", tileWidth * 8, tileWidth * 8),0,0);
+	dicectx.clearRect(0,0, tileWidth * 7.5, tileWidth * 7.5);
+	dicectx.putImageData(drawARegularTile("white", tileWidth * 7.5, tileWidth * 7.5),0,0);
 	var name1=nameValue[(placeValue[0][currentpos])-1][0];
-	dicectx.fillText(name1,tileWidth,tileWidth*2,tileWidth*2);
-	TextLine=placeText(name1);
-	dicectx.font="10px helvetica";
-	dicectx.wrapText(TextLine,tileWidth,tileWidth*2.2,20,10);
+	dicectx.fillText(name1,tileWidth,tileWidth*1.5,tileWidth*2);
+	TextLine=placeText(name1,color);
+	//titleText=
+	dicectx.font="15px helvetica";
+	dicectx.wrapText(TextLine,tileWidth,tileWidth*2.2,200,16);
+
  }
+ 
+function displayDetails(){
+	pctx.font = "10px arial";
+	pctx.fillStyle='black';
+	pctx.putImageData(drawARegularTile("white", tileWidth *8, tileWidth * 8),0,0);
+	//placing the permanent labels
+	pctx.fillText("MU",tileWidth*1,tileWidth*0.25,tileWidth);
+	pctx.fillText("WB",tileWidth*1.7,tileWidth*0.25,tileWidth*0.5);
+	pctx.fillText("RS",tileWidth*2.4,tileWidth*0.25,tileWidth*0.5);
+	pctx.fillText("SI",tileWidth*3.1,tileWidth*0.25,tileWidth*0.5);
+	pctx.fillText("Player 1",tileWidth*0.3,tileWidth*0.5,tileWidth*2);
+	pctx.fillText("Player 2",tileWidth*0.3,tileWidth*0.75,tileWidth*2);
+	pctx.fillText("Player 3",tileWidth*0.3,tileWidth*1,tileWidth*2);
+	pctx.fillText("Player 4",tileWidth*0.3,tileWidth*1.25,tileWidth*2);
+	
+	var i=0;
+	//placing the scores
+	for(i=0;i<4;i++){
+		pctx.fillText(MU[i],tileWidth,tileWidth*(0.5+(i*0.25)),tileWidth);
+		pctx.fillText(WB[i],tileWidth*1.7,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
+		pctx.fillText(RS[i],tileWidth*2.4,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
+		pctx.fillText(SI[i],tileWidth*3.1,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
+	
+	}
+} 
  
 function placeDefaultPlanes(color) {
     var redposes = [0.45, 7.5];
@@ -473,4 +564,350 @@ function placePlane(color)
 	for (var tempPosInd = 0; tempPosInd < 4; tempPosInd++) {
 		upctx.drawImage(img, tileWidth * currentpos[tempPosInd], tileWidth * currentpos[tempPosInd + 1], tileWidth/3, tileWidth/3);
 } 
+}
+
+function expense()
+{
+	var tl="";
+	var optione=expenseValue[0]+1;
+	expenseValue.splice(0,1);
+	console.log(optione);
+	if (optione==null)
+	{	
+		expenseValue=randomizer(24);
+		expense();
+}
+else{
+	switch (optione){
+		case 1:tl="You decide to buy a brand new vehicle. Pay 200% of your net income as purchase price. \
+		Reduce net income by 20% for meeting EMI payments and operating costs. Get 5 RS units.";
+		titl="Buy a vehicle";break;
+		
+		case 2:tl="Go on a family vacation within the country. Pay 50% of your net income towards expenses. Get 15 WB units.";
+		titl="Vacation time";break;
+		
+		case 3:tl="It is time to pay for your children’s education and overall learning. You can select any one of the following options:";
+		titl="Children education, sports, entertainment";break;
+		
+		case 4:tl="You decide to join a club for networking and staying fit. You can select any one of the following options:";
+		titl="Club membership";break;
+		
+		case 5:tl="It is festival time and you participate in any of the following forms:";
+		titl="Festival expenses";break;
+		
+		case 6:tl="There are occasions and events in the family. Your participation is required.";
+		titl="Family events";break;
+		
+		case 7:tl="Your favourite sport event is in town. You must follow it and support your team. You can do this in any of the following ways:";
+		titl="Live sports event";break;
+		
+		case 8:tl="You face a serious health issue. Medical check-ups, doctor visits and medicines take their toll. Pay 100% of your net income towards expenses. Lose 30 WB units.";
+		titl="Health expenses";break;
+		
+		case 9:tl="There is a marriage in the immediate family. Your participation is critical. Spend 100% of your net income for the expenses. Get 10 RS and 5 WB units.";
+		titl="Marriage";break;
+
+		case 10:tl="Your children perform well in their academic and sporting events. You decide to celebrate their achievements.\
+		Pay 25% of your net income for expenses. Get 5 RS, 5 WB and 5 SI units. ";
+		titl="Children";break;
+		
+		case 11:tl="Your house needs repairs and renovation and you decide to undertake it immediately. You can do it in any of the following ways:";
+		titl="House repairs and renovation";break;
+		
+		case 12:tl="You decide to purchase some durables and convenience equipment. Pay 100% of your net income. Get 5 WB units. ";
+		titl="Luxury goods, durables";break;
+		
+		case 13:tl="You are in celebration mood. Pay 50% of your net income and get 5 RS units.";
+		titl="Parties: birthday, anniversary, promotion";break;
+
+		case 14:tl="There is a burglary and your valuables are taken away. Lose 50% of your investments in gold and jewellery,\
+		lose 20 WB units. If you have taken burglary insurance, you lose nothing.";
+		titl="Theft";break;
+		
+		case 15:tl="You go out with your family for dinner. Spend 20% of your net income.";
+		titl="Eating out";break;
+		
+		case 16:tl="You enjoy the latest movie with your family. Spend 20% of your net income.";
+		titl="Movie day";break;
+		
+		case 17:tl="You enjoy the weekly market and go there to buy stuff. Spend 10% of your net income.";
+		titl="Sunday market";break;
+		
+		case 18:tl="You wait for festival sales to pick up all you want at discounted prices. You splurge on purchases as everything is a bargain. Spend 40% of your net income.";
+		titl="Festival sale";break;
+		
+		case 19:tl="You like to buy books and gadgets from the net. You get good deals and the latest items. Spend 30% of your net income.";
+		titl="Online shopping";break;
+		
+		case 20:tl="Having the latest gadget is your soft corner. You decide to buy the latest handset to hit the market. Spend 50% of your net income.";
+		titl="Mobile handset";break;
+		
+		case 21:tl="You buy new clothes for all in the family. Spend 40% of your net income.";
+		titl="Clothing";break;
+		
+		case 22:tl="You just love buying footwear. Whether it is for work, walking, exercises, games or matching your clothes,\
+		you need to have the best. Spend 20% of your net income.";
+		titl="Footwear";break;
+		
+		case 23:tl="You need a new pair of spectacles. Spend 500 MU.";
+		titl="Optician";break;
+		
+		case 24:tl="You buy toys and games for children in the family. Spend 20% of your net income.";
+		titl="Toys and games";break;
+		
+		default:
+		tl="It's Working";
+	}
+}
+	return tl;
+}
+
+function Event()
+{
+	var tl="";
+	var optione=eventValue[0]+1;
+	eventValue.splice(0,1);
+	console.log(optione);
+	if (optione==null)
+	{	
+		eventValue=randomizer(24);
+		Event();
+}
+else{
+	switch (optione){
+		case 1:tl="Congratulations! You have been promoted. Your gross income and net income increase by 300 MU. Also get 5 RS units.";
+		titl="Promotion";break;
+		
+		case 2:tl="Your company side-lines you and you no longer do any exciting work. Lose 10% of your net income due to reduced variable pay. Lose 10 RS and 5 WB units.";
+		titl="Side lined, on bench";break;
+		
+		case 3:tl="The industry you work in faces a severe recession. Times are bad and many companies are shutting down, controlling costs or reducing staff. \
+		Getting an alternate job is also difficult. Lose 20% of your net income due to reduced variable pay. Lose 10 WB units. ";
+		titl="Recession";break;
+		
+		case 4:tl="Your marriage is on the rocks leading to divorce. Lose half your MU on hand, reduce all your investments by half. Lose 20 RS and 30 WB units. ";
+		titl="Divorce";break;
+		
+		case 5:tl="Lose your job. Lose 10 RS and 10 WB units. Lose 1 turn to find another job of the same activity.";
+		titl="Retrenchment";break;
+		
+		case 6:tl="Your employer relocates you to another city. If you accept the relocation, pay 500 MU towards relocation expenses.";
+		titl="Relocation";break;
+		
+		case 7:tl="Your hard work, sincerity and ability to achieve targets are recognized and you get rewarded. \
+		Your gross income and net income increase by 300 MU. You also get 5 RS and 10 WB units. ";
+		titl="Recognition";break;
+		
+		case 8:tl="";
+		titl="Academic excellence";break;
+		
+		case 9:tl="You have surpassed your work targets resulting in good performance for the company. You are rewarded with a cash award of 50% of your net income. Get 10 RS units.";
+		titl="Target achievement";break;
+		
+		case 10:tl="You decide to join a social organization to undertake activities in urban and semi-urban areas.\
+		Reduce your net income by 10% towards expenses. Get 10 WB and 10 SI units.";
+		titl="Join a social organization ";break;
+
+		case 11:tl="You take a sabbatical and decide to spend time with villagers to understand their main concerns and issues. Lose 1 turn. Get 5 RS and 10 WB units.";
+		titl="Sabbatical";break;
+		
+		case 12:tl="You decide to donate 50% of your net income to a social cause. \
+		You can give this money to any other player who is doing full-time social activity or pay the units to the bank. Get 10 WB units.";
+		titl="Donation to charity";break;
+		
+		case 13:tl="Your good friend approaches you with a request to support him in his social activity. \
+		You have an option to give up your job and join him on a full-time basis. Get 100% of your net income as dues and leave settlement. Get 20 RS and 10 WB units. ";
+		titl="SE opportunity";break;
+		
+		case 14:tl="You have an option to retire from your job and start a full-time social activity. Get 100% of your gross income as dues and leave settlement. Get 10 WB units.";
+		titl="Retirement";break;
+	
+		case 15:tl="";
+		titl="Calamity";break;
+		
+		case 16:tl="Your leave application for taking a family holiday has been declined due to work pressures and targets. \
+		Your family is upset over this and so are you. Lose 10 WB units. ";
+		titl="Leave declined";break;
+		
+		case 17:tl="You actively participate in business meetings; your thoroughness, balanced approach, \
+		leadership quality and ability to create a win-win solution are appreciated. Get 10 RS and 5 WB units. ";
+		titl="Good contribution in meetings";break;
+		
+		case 18:tl="You innovate and implement measures which help the company improve its processes, reducing wastage and costs. Get 5 RS and 10 SI units.";
+		titl="Innovative solutions";break;
+		
+		case 19:tl="It is time for the annual performance appraisal. You get a good feedback from the management for the work done and initiatives taken. \
+		Your gross income and net income increase by 200 MU.";
+		titl="Annual performance appraisal";break;
+		
+		case 20:tl="You are often late in reporting to office. Your colleagues and management take note of it and your leaves get deducted. Lose 5 WB units. ";
+		titl="Late coming";break;
+		
+		case 21:tl="Your intelligence, insights, hard work, commitment, perseverance and sincerity get noticed resulting in special assignments coming your way.\
+		You get very good experience and earn a good reputation by executing the assignments. Get 20 RS units.";
+		titl="Work on special assignments";break;
+
+		case 22:tl="You and your department achieved their targets and concluded an important assignment. \
+		Get 25% of your net income as performance bonus. Also get 5 RS and 5 WB units.";
+		titl="Performance bonus";break;
+
+		case 23:tl="The company is facing difficult times and initiates various cost cutting measures. Your earlier freedom, perquisites, \
+		travel and expense budgets are curtailed, resulting in hardship during execution. Lose 5 WB units. ";
+		titl="Cost cutting";break;
+
+		case 24:tl="Your initiative and reference has resulted in a big order for the company. You are rewarded for it.\
+		Get 20% of your net income as sales incentive. Also get 5 RS units.";
+		titl="Big order";break;
+
+		default:
+		tl="It's Working";
+	}
+}
+	return tl;
+}
+
+
+function opportunity()
+{
+	var tl="";
+	var optione=oppurValue[0]+1;
+	console.log(optione);
+	oppurValue.splice(0,1);
+	if (optione==null)
+	{	
+		oppurValue=randomizer(24);
+		opportunity();
+}
+else{
+	switch (optione){
+		case 1:tl="You have an option to invest as much as you like in fixed deposits. Earn interest at 5% of the amount you decide to invest.\
+		Alternately, you may decide to invest nothing. ";
+		titl="Invest in fixed deposits";break;
+		
+		case 2:tl="You have an option to invest as much as you like in fixed deposits. Earn interest at 5% of the amount you decide to invest.\
+		Alternately, you may decide to invest nothing. ";
+		titl="Invest in fixed deposits";break;
+		
+		case 3:tl="";
+		titl="Insurance - life, medical, burglary";break;
+		
+		case 4:tl="You can subscribe to a pension fund. Reduce your net income by 20%. Get 200 MU per month when you undertake a full-time social activity.";
+		titl="Pension fund";break;
+		
+		case 5:tl="You can buy as much gold and jewellery you want. Pay 500 MU for every unit of purchase. Anyone can sell at this price.";
+		titl="Gold, jewellery";break;
+		
+		case 6:tl="You can buy as much gold and jewellery you want. Pay 400 MU for every unit of purchase. Anyone can sell at this price.";
+		titl="Gold, jewellery";break;
+		
+		case 7:tl="You can buy as much gold and jewellery you want. Pay 300 MU for every unit of purchase. Anyone can sell at this price.";
+		titl="Gold, jewellery";break;
+		
+		case 8:tl="You can buy as much gold and jewellery you want. Pay 600 MU for every unit of purchase. Anyone can sell at this price.";
+		titl="Gold, jewellery";break;
+		
+		case 9:tl="You can buy as much stocks and mutual funds as you want. Pay 100 MU for every unit of stock purchased and 120 MU for every unit of mutual fund purchased.\
+		Anyone can sell at this price.";
+		titl="Invest in stocks, mutual funds";break;
+		
+		case 10:tl="You can buy as much stocks and mutual funds as you want. Pay 90 MU for every unit of stock purchased and 110 MU for every unit of mutual fund purchased.\
+		Anyone can sell at this price.";
+		titl="Invest in stocks, mutual funds";break;
+		
+		case 11:tl="You can buy as much stocks and mutual funds as you want. Pay 150 MU for every unit of stock purchased and 170 MU for every unit of mutual fund purchased.\
+		Anyone can sell at this price.";
+		titl="Invest in stocks, mutual funds";break;
+		
+		case 12:tl="You can buy as much stocks and mutual funds as you want. Pay 200 MU for every unit of stock purchased and 220 MU for every unit of mutual fund purchased.\
+		Anyone can sell at this price.";
+		titl="Invest in stocks, mutual funds";break;
+		
+		case 13:tl="You can buy as much stocks and mutual funds as you want. Pay 50 MU for every unit of stock purchased and 60 MU for every unit of mutual fund purchased. \
+		Anyone can sell at this price.";
+		titl="Invest in stocks, mutual funds";break;
+		
+		case 14:tl="Your investments have paid off giving good returns. All investments (gold, land, property, stocks, mutual funds) go up by 50%. \
+		This benefit is for all players. Anyone can sell at this price.";
+		titl="Your investments grow";break;
+		
+		case 15:tl="The economy is thriving with all-round growth and prosperity. All investments in stock and mutual funds double. \
+		This benefit is for all players. Anyone can sell at this price.";
+		titl="Good economic times";break;
+		
+		case 16:tl="The economy is running through a lean patch. Inflation is high, reducing purchasing power and demand. \
+		All investments in stock and mutual funds reduce by 25%. This applies to all players. Anyone can sell at this price.";
+		titl="Economic trouble";break;
+
+		case 17:tl="The stock market is hit by a scam resulting in a major payment crisis. All holdings in stocks and mutual funds are reduced to half. \
+		This applies to all players. Anyone can sell at this price.";
+		titl="Stock scam";break;
+
+		case 18:tl="You turn sceptical about the economy. You decide to play it safe and want to liquidate a part of your investments. You can sell any of your investments \
+		(gold, stocks, mutual funds, land, property) at a profit of 50%. Each player must sell at least one unit of their investments. They can sell more. ";
+		titl="Liquidate investments";break;
+
+		case 19:tl="You decide to undertake a part-time activity. Increase your gross income and net income by 300 MU. ";
+		titl="Part-time income";break;
+
+		case 20:tl="You have an option to purchase your own house. Pay 200% of your net income as down payment. Reduce your net income by 40% for EMI payments. Get 10 RS and 10 WB units.";
+		titl="Property - residential (for self-occupation)";break;
+		
+		case 21:tl="You have an option of purchasing a property for letting out. Pay 2,000 MU per unit of property purchased. Earn rent of 50 MU per unit. Get 10 WB units.";
+		titl="Property for letting out ";break;
+		
+		case 22:tl="You have an option of purchasing a property for letting out. Pay 1,500 MU per unit of property purchased. Earn rent of 50 MU per unit. Get 10 WB units.";
+		titl="Property for letting out ";break;
+		
+		case 23:tl="You have an option of purchasing a property for letting out. Pay 2,500 per unit of property purchased. Earn rent of 100 MU per unit. Get 10 WB units.";
+		titl="Property for letting out ";break;
+		
+		case 24:tl="You have an option to purchase land for future use. Pay 750 MU for every unit of land purchased. Anyone can sell at this price.";
+		titl="Property - land";break;
+		
+		case 25:tl="You have an option to purchase land for future use. Pay 700 MU for every unit of land purchased. Anyone can sell at this price.";
+		titl="Property - land";break;
+		
+		case 26:tl="You have an option to purchase land for future use. Pay 800 MU for every unit of land purchased. Anyone can sell at this price.";
+		titl="Property - land";break;
+		
+		case 27:tl="You have an option to purchase land for future use. Pay 900 MU for every unit of land purchased. Anyone can sell at this price.";
+		titl="Property - land";break;
+		
+		case 28:tl="Your friend wants to expand his business and wants money. He approaches you to become a passive partner in his business. \
+		The business is stable and growing. You have an option of investing 100% of your net income in his business. Receive profit share of 10% of your investment.";
+		titl="Passive business partner";break;
+		
+		case 29:tl="You win a prize in a radio competition to promote awareness on environment protection and eco-friendly measures to be adopted by society.\
+		You receive a cash award of 3,000 MU. You also get 5 RS and 10 SI units.  ";
+		titl="Radio competition";break;
+		
+		case 30:tl="You win a prize in a competition for addressing pressing social issues and introducing innovative methods to improve the society.\
+		You receive a cash award of 2,000 MU. You also get 10 RS and 20 SI units.  ";
+		titl="Change your society competition";break;
+		
+		case 31:tl="You have an opportunity to interact with your favourite celebrity. Pay 400 MU towards expenses. Get 10 RS units.";
+		titl="Interact with a celebrity";break;
+		
+		case 32:tl="You participate in a poster design competition for protecting the environment from pollution and get the second prize of 200 MU. Get 10 RS units.";
+		titl="Poster design competition";break;
+		
+		case 33:tl="You undertake a small business in connection with the local festival, supplying and helping people with decorations and artistic themes. Earn 500 MU.";
+		titl="Festival business";break;
+		
+		case 34:tl="You get an opportunity to attend a seminar on the art of enabling people perform better in their lives. \
+		It has a profound impact on your attitude and personality. Get 20 WB units. ";
+		titl="Learn from the master";break;
+		
+		case 35:tl="You volunteer for the human development conclave where you get an opportunity to interact with global leaders who have impacted their society.\
+		Get 10 RS and 10 WB units. ";
+		titl="Event volunteer";break;
+		
+		case 36:tl="You participate in a TV talent competition. Your talent gets noticed and you get offers increasing your gross income and net income by 300 MU. Get 20 RS units.";
+		titl="TV talent competition";break;
+		
+		default:
+		tl="It's Working";
+	}
+}
+	return tl;
 }
