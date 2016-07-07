@@ -21,6 +21,21 @@ var SI =[0,0,0,0];
 var MU =[0,0,0,0];
 var RS =[0,0,0,0];
 var WB =[0,0,0,0];
+//rates
+var PRR =[0,0,0,0];
+var JER =[0,0,0,0];
+//quantities
+var PRQ =[0,0,0,0];
+var JEQ =[0,0,0,0];
+//mutual fund
+var MFQ=[0,0,0,0];
+var MFR=[0,0,0,0];
+//fixed deposits
+var FDQ=[0,0,0,0];
+var FDR=[0,0,0,0];
+//stocks
+var stoq=[0,0,0,0];
+var stor=[0,0,0,0];
 
 function randomizer(size){
 	var a=new Array()
@@ -152,28 +167,46 @@ function initPlayGround() {
 
 
 function displayDetails(){
-	pctx.font = "12px arial";
+	pctx.font = "10px arial";
 	pctx.fillStyle='black';
 	//pctx.clearRect(tileWidth *8, tileWidth * 8,0,0);
-	pctx.putImageData(drawARegularTile("white", tileWidth *8, tileWidth * 8),0,0);
+	pctx.putImageData(drawARegularTile("white", tileWidth *4, tileWidth * 4),0,0);
 	//placing the permanent labels
-	pctx.wrapText("MU",tileWidth*1,tileWidth*0.25,tileWidth,tileWidth*0.5);
-	pctx.wrapText("WB",tileWidth*1.7,tileWidth*0.25,tileWidth*0.5,tileWidth);
-	pctx.wrapText("RS",tileWidth*2.4,tileWidth*0.25,tileWidth*0.5,tileWidth);
-	pctx.wrapText("SI",tileWidth*3.1,tileWidth*0.25,tileWidth*0.5,tileWidth);
-	pctx.wrapText("Player 1",tileWidth*0.3,tileWidth*0.5,tileWidth*2,tileWidth);
-	pctx.wrapText("Player 2",tileWidth*0.3,tileWidth*0.75,tileWidth*2,tileWidth);
-	pctx.wrapText("Player 3",tileWidth*0.3,tileWidth*1,tileWidth*2,tileWidth);
-	pctx.wrapText("Player 4",tileWidth*0.3,tileWidth*1.25,tileWidth*2,tileWidth);
-	
+	pctx.wrapText("P1",tileWidth*1,tileWidth*0.1,tileWidth,tileWidth*0.5);
+	pctx.wrapText("P2",tileWidth*1.7,tileWidth*0.1,tileWidth*0.5,tileWidth);
+	pctx.wrapText("P3",tileWidth*2.4,tileWidth*0.1,tileWidth*0.5,tileWidth);
+	pctx.wrapText("P4",tileWidth*3.1,tileWidth*0.1,tileWidth*0.5,tileWidth);
+	pctx.wrapText("MU",tileWidth*0.1,tileWidth*0.24,tileWidth*2,tileWidth);
+	pctx.wrapText("WB",tileWidth*0.1,tileWidth*0.36,tileWidth*2,tileWidth);
+	pctx.wrapText("RS",tileWidth*0.1,tileWidth*0.48,tileWidth*2,tileWidth);
+	pctx.wrapText("SI",tileWidth*0.1,tileWidth*0.6,tileWidth*2,tileWidth);
+	pctx.wrapText("Property Q",tileWidth*0.1,tileWidth*0.72,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Property V",tileWidth*0.1,tileWidth*0.84,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Jewellery Q",tileWidth*0.1,tileWidth*0.96,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Jewellery V",tileWidth*0.1,tileWidth*1.08,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Mutual F Q",tileWidth*0.1,tileWidth*1.20,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Mutual F V",tileWidth*0.1,tileWidth*1.32,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Stock Q",tileWidth*0.1,tileWidth*1.44,tileWidth*0.7,tileWidth);
+	pctx.wrapText("Stock V",tileWidth*0.1,tileWidth*1.56,tileWidth*0.7,tileWidth);
+	pctx.wrapText("FD Q",tileWidth*0.1,tileWidth*1.68,tileWidth*0.7,tileWidth);
+	pctx.wrapText("FD V",tileWidth*0.1,tileWidth*1.80,tileWidth*0.7,tileWidth);
 	var i=0;
 	//placing the scores
 	for(i=0;i<4;i++){
-		pctx.fillText(MU[i],tileWidth,tileWidth*(0.5+(i*0.25)),tileWidth);
-		pctx.fillText(WB[i],tileWidth*1.7,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
-		pctx.fillText(RS[i],tileWidth*2.4,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
-		pctx.fillText(SI[i],tileWidth*3.1,tileWidth*(0.5+(i*0.25)),tileWidth*0.5);
-	
+		pctx.fillText(MU[i],tileWidth*(1+(i*0.7)),tileWidth*(0.24),tileWidth);
+		pctx.fillText(WB[i],tileWidth*(1+(i*0.7)),tileWidth*(0.36),tileWidth*0.5);
+		pctx.fillText(RS[i],tileWidth*(1+(i*0.7)),tileWidth*(0.48),tileWidth*0.5);
+		pctx.fillText(SI[i],tileWidth*(1+(i*0.7)),tileWidth*(0.60),tileWidth*0.5);
+		pctx.fillText(PRQ[i],tileWidth*(1+(i*0.7)),tileWidth*(0.72),tileWidth*0.5);
+		pctx.fillText(PRR[i]*PRQ[i],tileWidth*(1+(i*0.7)),tileWidth*(0.84),tileWidth*0.5);
+		pctx.fillText(JEQ[i],tileWidth*(1+(i*0.7)),tileWidth*(0.96),tileWidth*0.5);
+		pctx.fillText(JER[i]*JEQ[i],tileWidth*(1+(i*0.7)),tileWidth*(1.08),tileWidth*0.5);
+		pctx.fillText(MFQ[i],tileWidth*(1+(i*0.7)),tileWidth*(1.20),tileWidth*0.5);
+		pctx.fillText(MFR[i]*MFQ[i],tileWidth*(1+(i*0.7)),tileWidth*(1.32),tileWidth*0.5);
+		pctx.fillText(stoq[i],tileWidth*(1+(i*0.7)),tileWidth*(1.44),tileWidth*0.5);
+		pctx.fillText(stoq[i]*stor[i],tileWidth*(1+(i*0.7)),tileWidth*(1.56),tileWidth*0.5);
+		pctx.fillText(FDQ[i],tileWidth*(1+(i*0.7)),tileWidth*(1.68),tileWidth*0.5);
+		pctx.fillText(FDR[i]*FDQ[i],tileWidth*(1+(i*0.7)),tileWidth*(1.80),tileWidth*0.5);
 	}
 } 
  
@@ -621,14 +654,16 @@ else{
 	switch (optione){
 		case 1:tl="You decide to buy a brand new vehicle. Pay 200% of your net income as purchase price. \
 		Reduce net income by 20% for meeting EMI payments and operating costs. Get 5 RS units.";
-		
+		MU[i]-=(2*NI[i]);
+		NI[i]=0.8*NI[i];
+		RS[i]+=5;
 		titl="Buy a vehicle";break;
 		
 		case 2:tl="Go on a family vacation within the country. Pay 50% of your net income towards expenses. Get 15 WB units.";
 		MU[i]-=(0.5*NI[i]);
 		WB[i]+=15;
 		titl="Vacation time";break;
-		
+		//these 5 left
 		case 3:tl="It is time to pay for your children’s education and overall learning. You can select any one of the following options:";
 		titl="Children education, sports, entertainment";break;
 		
@@ -663,6 +698,7 @@ else{
 		SI[i]+=5;
 		titl="Children";break;
 		
+		//left
 		case 11:tl="Your house needs repairs and renovation and you decide to undertake it immediately. You can do it in any of the following ways:";
 		titl="House repairs and renovation";break;
 		
@@ -740,7 +776,8 @@ function Event(i)
 		eventValue=randomizer(24);
 		Event();
 }
-else{
+else
+{
 	switch (optione){
 		case 1:tl="Congratulations! You have been promoted. Your gross income and net income increase by 300 MU. Also get 5 RS units.";
 		NI[i]+=300;
@@ -818,7 +855,7 @@ else{
 		titl="SE opportunity";break;*/
 		tl="Your leave application for taking a family holiday has been declined due to work pressures and targets. \
 		Your family is upset over this and so are you. Lose 10 WB units. ";
-		WB[i]+=10;
+		WB[i]-=10;
 		titl="Leave declined";break;
 		
 		case 14:
@@ -829,13 +866,14 @@ else{
 		RS[i]+=10;
 		WB[i]+=5;
 		titl="Good contribution in meetings";break;
-		
+
+		//left
 		case 15:tl="";
 		titl="Calamity";break;
 		
 		case 16:tl="Your leave application for taking a family holiday has been declined due to work pressures and targets. \
 		Your family is upset over this and so are you. Lose 10 WB units. ";
-		WB[i]+=10;
+		WB[i]-=10;
 		titl="Leave declined";break;
 		
 		case 17:tl="You actively participate in business meetings; your thoroughness, balanced approach, \
@@ -905,6 +943,7 @@ else{
 	switch (optione){
 		case 1:tl="You have an option to invest as much as you like in fixed deposits. Earn interest at 5% of the amount you decide to invest.\
 		Alternately, you may decide to invest nothing. To invest nothing, write 0.";
+		
 		titl="Invest in fixed deposits";break;
 		
 		case 2:tl="You have an option to invest as much as you like in fixed deposits. Earn interest at 5% of the amount you decide to invest.\
@@ -914,43 +953,88 @@ else{
 		case 3:tl="";
 		titl="Insurance - life, medical, burglary";break;
 		
-		case 4:tl="You can subscribe to a pension fund. Reduce your net income by 20%.  To invest nothing, write 0.";
+		case 4:tl="You can subscribe to a pension fund. Reduce your net income by 20%.";
 		titl="Pension fund";break;
 		
 		case 5:tl="You can buy as much gold and jewellery you want. Pay 500 MU for every unit of purchase. Anyone can sell at this price.  To invest nothing, write 0.";
-		titl="Gold, jewellery";break;
+		titl="Gold, jewellery";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(500,i,1);};
+		break;
 		
 		case 6:tl="You can buy as much gold and jewellery you want. Pay 400 MU for every unit of purchase. Anyone can sell at this price.  To invest nothing, write 0.";
-		titl="Gold, jewellery";break;
+		titl="Gold, jewellery";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(400,i,1);};
+		break;
 		
 		case 7:tl="You can buy as much gold and jewellery you want. Pay 300 MU for every unit of purchase. Anyone can sell at this price.  To invest nothing, write 0.";
-		titl="Gold, jewellery";break;
+		titl="Gold, jewellery";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(300,i,1);};
+		break;
 		
 		case 8:tl="You can buy as much gold and jewellery you want. Pay 600 MU for every unit of purchase. Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(600,i,1);};
 		titl="Gold, jewellery";break;
 		
 		case 9:tl="You can buy as much stocks and mutual funds as you want. Pay 100 MU for every unit of stock purchased and 120 MU for every unit of mutual fund purchased.\
 		Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("mf").hidden=false;
+		document.getElementById("st").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystock(100,120,i);};
 		titl="Invest in stocks, mutual funds";break;
 		
 		case 10:tl="You can buy as much stocks and mutual funds as you want. Pay 90 MU for every unit of stock purchased and 110 MU for every unit of mutual fund purchased.\
 		Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("mf").hidden=false;
+		document.getElementById("st").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystock(90,110,i);};
 		titl="Invest in stocks, mutual funds";break;
 		
 		case 11:tl="You can buy as much stocks and mutual funds as you want. Pay 150 MU for every unit of stock purchased and 170 MU for every unit of mutual fund purchased.\
 		Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("mf").hidden=false;
+		document.getElementById("st").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystock(150,170,i);};
 		titl="Invest in stocks, mutual funds";break;
 		
 		case 12:tl="You can buy as much stocks and mutual funds as you want. Pay 200 MU for every unit of stock purchased and 220 MU for every unit of mutual fund purchased.\
 		Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("mf").hidden=false;
+		document.getElementById("st").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystock(200,220,i);};
 		titl="Invest in stocks, mutual funds";break;
 		
 		case 13:tl="You can buy as much stocks and mutual funds as you want. Pay 50 MU for every unit of stock purchased and 60 MU for every unit of mutual fund purchased. \
 		Anyone can sell at this price.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("mf").hidden=false;
+		document.getElementById("st").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystock(50,60,i);};
 		titl="Invest in stocks, mutual funds";break;
 		
 		case 14:tl="Your investments have paid off giving good returns. All investments (gold, land, property, stocks, mutual funds) go up by 50%. \
 		This benefit is for all players. Anyone can sell at this price.  To sell nothing, write 0.";
+		
 		titl="Your investments grow";break;
 		
 		case 15:tl="The economy is thriving with all-round growth and prosperity. All investments in stock and mutual funds double. \
@@ -970,30 +1054,56 @@ else{
 		titl="Liquidate investments";break;
 
 		case 19:tl="You decide to undertake a part-time activity. Increase your gross income and net income by 300 MU. ";
+		NI[i]+=300;
+		GI[i]+=300;
 		titl="Part-time income";break;
 
 		case 20:tl="You have an option to purchase your own house. Pay 200% of your net income as down payment. Reduce your net income by 40% for EMI payments. Get 10 RS and 10 WB units.";
+		MU[i]-=(2*NI[i]);
+		NI[i]=(NI[i]-(0.4*NI[i]));
+		GI[i]=(GI[i]-(0.4*NI[i]));
+		RS[i]+=10;
+		WB[i]+=10;
 		titl="Property - residential (for self-occupation)";break;
 		
 		case 21:tl="You have an option of purchasing a property for letting out. Pay 2,000 MU per unit of property purchased. Earn rent of 50 MU per unit. Get 10 WB units.";
+		
 		titl="Property for letting out ";break;
 		
 		case 22:tl="You have an option of purchasing a property for letting out. Pay 1,500 MU per unit of property purchased. Earn rent of 50 MU per unit. Get 10 WB units.";
+		
 		titl="Property for letting out ";break;
 		
 		case 23:tl="You have an option of purchasing a property for letting out. Pay 2,500 per unit of property purchased. Earn rent of 100 MU per unit. Get 10 WB units.";
+		
 		titl="Property for letting out ";break;
 		
 		case 24:tl="You have an option to purchase land for future use. Pay 750 MU for every unit of land purchased.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(750,i,0);};
 		titl="Property - land";break;
 		
 		case 25:tl="You have an option to purchase land for future use. Pay 700 MU for every unit of land purchased.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(700,i,0);};
 		titl="Property - land";break;
 		
 		case 26:tl="You have an option to purchase land for future use. Pay 800 MU for every unit of land purchased.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(800,i,0);};
 		titl="Property - land";break;
 		
 		case 27:tl="You have an option to purchase land for future use. Pay 900 MU for every unit of land purchased.  To invest nothing, write 0.";
+		document.getElementById("okay").disabled=true;
+		document.getElementById("in").hidden=false;
+		document.getElementById("buy").hidden=false;
+		document.getElementById("buy").onclick=function(){buystuff(900,i,0);};
 		titl="Property - land";break;
 		
 		case 28:tl="Your friend wants to expand his business and wants money. He approaches you to become a passive partner in his business. \
@@ -1053,4 +1163,35 @@ else{
 	}
 }
 	return titl+"\n\n"+tl;
+}
+//0 for property, 1 for jewellery
+function buystuff(rate,i,type)
+{
+	if(type==0)
+	{
+		PRR[i]=rate;
+		PRQ[i]=document.getElementById("in").value;
+	}
+	else if(type==1)
+	{
+		JER[i]=rate;
+		JEQ[i]=document.getElementById("in").value;
+	} 
+	console.log(rate*(document.getElementById("in").value));
+	MU[i]-=(rate*(document.getElementById("in").value));
+	document.getElementById("okay").disabled=false;
+	document.getElementById("buy").hidden=true;
+	document.getElementById("in").hidden=true;
+}
+function buystock(st,mf,i)
+{
+	MFQ[i]=document.getElementById("mf").value;
+	MFR[i]=mf;
+	stoq[i]=document.getElementById("st").value;
+	stor[i]=st;
+	MU[i]-=((MFQ[i]*MFR[i])+(stoq[i]*stor[i]));
+	document.getElementById("okay").disabled=false;
+	document.getElementById("buy").hidden=true;
+	document.getElementById("mf").hidden=true;
+	document.getElementById("st").hidden=true;
 }
