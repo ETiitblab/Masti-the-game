@@ -1,16 +1,24 @@
-﻿<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
     <title>Masti the game </title>
     <link rel="stylesheet" type="text/css" href="Styles/game.css" />
 </head>
-<body>
+<body> 
     <div id="playGround" style="display:none;">
         <div id="main">
             <canvas id="gameboard"></canvas>
             <canvas id="playboard"></canvas>
             <canvas id="dice"></canvas>
-        </div>
+			<canvas id="player"></canvas>
+			<input type="button" id="okay" value="Okay" style="position: absolute; z-index: 1; left: 125px; top: 475px; width:75px; height:20px;cursor:pointer;" onclick="enablerolling(this)" hidden="true"/>
+			<input type="button" id="no" value="No" style="position: absolute; z-index: 1; left: 215px; top: 475px; width:75px; height:20px;cursor:pointer;" onclick="enablerolling(this)" hidden="true" />
+			<input type="button" id="buy" value="buy" style="position: absolute; z-index: 1; left: 125px; top: 450px; width:75px; height:20px;cursor:pointer;"  hidden="true" />
+			<input type="button" id="sell" value="sell" style="position: absolute; z-index: 1; left: 215px; top: 450px; width:75px; height:20px;cursor:pointer;" " hidden="true"/>
+			<input type="number" id="in" style="position: absolute; z-index: 1; left: 125px; top: 420px; width:75px; height:20px;cursor:pointer;" hidden="true">
+			<input type="number" id="st" style="position: absolute; z-index: 1; left: 125px; top: 420px; width:75px; height:20px;cursor:pointer;" hidden="true" placeholder="stock">
+			<input type="number" id="mf" style="position: absolute; z-index: 1; left: 215px; top: 420px; width:75px; height:20px;cursor:pointer;" hidden="true" placeholder="mutual fund">
+		</div>
         <div id="buttondiv" style="margin-top:0; padding-top:0;">
             <input type="button" id="rollDice" value="Roll the Dice" style="height:20px; cursor:pointer;" onclick="rolltheDice(this)" />
         </div>
@@ -26,7 +34,11 @@
             <img id="dicefive" src="Images/dicefive.png" alt="dice" />
             <img id="dicesix" src="Images/dicesix.png" alt="dice" />
         </div>
+		
+
     </div>
+	
     <script type="text/javascript" src="Scripts/game.js"></script>
+
 </body>
 </html>
